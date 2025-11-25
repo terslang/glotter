@@ -1,0 +1,4 @@
+#pragma once
+
+#define GLOTTER_VERSION "@glotter_VERSION@"
+#define MODELS_REGISTRY_FILE_PATH "@MODELS_REGISTRY_FILE_PATH@"
