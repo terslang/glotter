@@ -10,7 +10,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Threads REQUIRED)
 find_package(nlohmann_json REQUIRED)
-find_package(ZLIB REQUIRED)
 find_package(kotki REQUIRED)
 find_package(marian-lite REQUIRED)
 find_package(yaml-cpp REQUIRED)
@@ -31,7 +30,7 @@ execute_process(
 
 set(MODELS_REGISTRY_FILE_PATH
     "$ENV{HOME}/.local/share/localtranslate/models/firefox/registry.json"
-    CACHE STRING "Path to the translation models registry file")
+    CACHE STRING "Path to the translation models registry.json file")
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/config.hpp.in"
                "${CMAKE_CURRENT_BINARY_DIR}/config/config.hpp")
@@ -45,7 +44,6 @@ target_link_libraries(
   ${PROJECT_NAME}
   PRIVATE nlohmann_json::nlohmann_json
           Threads::Threads
-          ZLIB::ZLIB
           kotki
           marian-lite
           yaml-cpp

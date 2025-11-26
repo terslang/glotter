@@ -7,8 +7,6 @@
 
 using json = nlohmann::json;
 
-#define CPPHTTPLIB_ZLIB_SUPPORT
-
 #define JSON_CONTENT_TYPE "application/json"
 #define PLAIN_TEXT_CONTENT_TYPE "text/plain"
 
