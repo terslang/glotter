@@ -2,8 +2,9 @@
 ########## Build Stage ###########
 ##################################
 FROM debian:trixie as build
-RUN apt update -y && \
-    apt install -y \
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -y && \
+    apt-get install -y \
         build-essential \
         autoconf \
         automake \
@@ -146,8 +147,9 @@ RUN cmake -DMODELS_REGISTRY_FILE_PATH=/usr/share/glotter/models/firefox/registry
 ########## Final Stage ###########
 ##################################
 FROM debian:trixie-slim as final
-RUN apt update -y && \
-    apt install -y \
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -y && \
+    apt-get install -y \
         curl \
         xz-utils \
         nlohmann-json3-dev \
@@ -157,6 +159,7 @@ RUN apt update -y && \
 
 RUN mkdir -p /deps/installdir
 
+# Copy installed dependencies from build stage
 COPY --from=build /deps/installdir /deps/installdir
 
 ENV PATH="/deps/installdir/bin:$PATH"

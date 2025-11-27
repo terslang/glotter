@@ -25,7 +25,6 @@ public:
                         const std::string &to) const;
   std::string transliterate(const std::string &text,
                             const std::string &lang) const;
-  bool is_non_latin_language(const std::string &lang) const;
 
 private:
   static constexpr std::array<std::pair<std::string_view, std::string_view>,
@@ -56,10 +55,6 @@ private:
                   {"te", "Telugu"},     {"tr", "Turkish"},
                   {"uk", "Ukrainian"},  {"vi", "Vietnamese"},
                   {"zh", "Chinese"}}};
-
-  static constexpr std::array<std::string, 20> non_latin_langs{
-      {"ar", "be", "bg", "bn", "el", "fa", "gu", "he", "hi", "ja",
-       "kn", "ko", "ml", "mt", "ru", "sr", "ta", "te", "uk", "zh"}};
 
   std::unique_ptr<Kotki> kotki;
   std::unique_ptr<icu::Transliterator> transliterator;

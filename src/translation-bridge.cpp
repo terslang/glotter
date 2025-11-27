@@ -52,11 +52,6 @@ std::string TranslationBridge::tarnslate(const std::string &text,
   return result;
 }
 
-bool TranslationBridge::is_non_latin_language(const std::string &lang) const {
-  return std::find(non_latin_langs.begin(), non_latin_langs.end(), lang) !=
-         non_latin_langs.end();
-}
-
 std::string
 TranslationBridge::kanji_to_katakana(const std::string &text) const {
   std::istringstream input_stream(text);
