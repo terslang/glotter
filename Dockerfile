@@ -40,18 +40,6 @@ RUN cd intgemm-0.0.3 && \
     make install
 RUN rm -rf intgemm-0.0.3
 
-# Build pathie-cpp
-RUN curl -LO https://github.com/kroketio/pathie-cpp/archive/refs/tags/0.1.3.tar.gz
-RUN tar -xzf 0.1.3.tar.gz && \
-    rm 0.1.3.tar.gz
-RUN cd pathie-cpp-0.1.3 && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/deps/installdir .. && \
-    make && \
-    make install
-RUN rm -rf pathie-cpp-0.1.3
-
 # Build Protobuf
 RUN curl -LO https://github.com/protocolbuffers/protobuf/archive/refs/tags/v21.12.tar.gz
 RUN tar -xvf v21.12.tar.gz && \
@@ -77,16 +65,16 @@ RUN cd sentencepiece-browsermt-0.2 && \
 RUN rm -rf sentencepiece-browsermt-0.2
 
 # Build marian-lite
-RUN curl -LO https://github.com/terslang/marian-lite/archive/refs/tags/v0.2.9-1.tar.gz
-RUN tar -xvf v0.2.9-1.tar.gz && \
-    rm v0.2.9-1.tar.gz
-RUN cd marian-lite-0.2.9-1 && \
+RUN curl -LO https://github.com/terslang/marian-lite/archive/refs/tags/v0.2.9-2.tar.gz
+RUN tar -xvf v0.2.9-2.tar.gz && \
+    rm v0.2.9-2.tar.gz
+RUN cd marian-lite-0.2.9-2 && \
     mkdir build && \
     cd build && \
     cmake -DSTATIC=OFF -DSHARED=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/deps/installdir .. && \
     make && \
     make install
-RUN rm -rf marian-lite-0.2.9-1
+RUN rm -rf marian-lite-0.2.9-2
 
 # Build Kotki
 RUN curl -LO https://github.com/terslang/kotki/archive/refs/tags/v0.6.0-1.tar.gz

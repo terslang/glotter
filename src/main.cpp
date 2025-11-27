@@ -20,7 +20,7 @@ int main() {
 
   svr.Get("/source-code",
           [&](const httplib::Request &req, httplib::Response &res) {
-            res.status = 301;
+            res.status = httplib::StatusCode::MovedPermanently_301;
             res.set_header("Location", "https://github.com/terslang/glotter");
           });
 
@@ -46,7 +46,7 @@ int main() {
         std::string text = j_body.contains("text") ? j_body["text"] : "";
 
         if (from.empty() || to.empty() || text.empty()) {
-          res.status = 400;
+          res.status = httplib::StatusCode::BadRequest_400;
           res.set_content("'text', 'from' or 'to' parameter cannot be empty",
                           PLAIN_TEXT_CONTENT_TYPE);
           return;
@@ -56,7 +56,7 @@ int main() {
         try {
           j_res["translation"] = bridge.tarnslate(text, from, to);
         } catch (const std::runtime_error) {
-          res.status = 500;
+          res.status = httplib::StatusCode::InternalServerError_500;
           res.set_content("Translation failed", PLAIN_TEXT_CONTENT_TYPE);
           return;
         }
@@ -72,7 +72,7 @@ int main() {
     std::string text = j_body.contains("text") ? j_body["text"] : "";
 
     if (lang.empty() || text.empty()) {
-      res.status = 400;
+      res.status = httplib::StatusCode::BadRequest_400;
       res.set_content("'text' or 'lang' parameter cannot be empty",
                       PLAIN_TEXT_CONTENT_TYPE);
       return;
@@ -83,7 +83,7 @@ int main() {
       j_res["transliteration"] = bridge.transliterate(text, lang);
       res.set_content(j_res.dump(), JSON_CONTENT_TYPE);
     } catch (const std::runtime_error) {
-      res.status = 500;
+      res.status = httplib::StatusCode::InternalServerError_500;
       res.set_content("Transliteration failed", PLAIN_TEXT_CONTENT_TYPE);
     }
   });
