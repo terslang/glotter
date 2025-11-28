@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Glotter</title>
+    <style>
+      body {
+          font-family: Arial, sans-serif;
+          margin-top: 50px;
+      }
+    
+      header {
+          display: flex;
+          gap: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Glotter</h1>
+      <h3 id="version"></h3>
+    </header>
+
+    <section>
+      <h2>Supported Languges</h2>
+      <ol id="languages"></ol>
+    </section>
+    
+    <script>
+      window.addEventListener("load", async () => {
+          fetch("/version")
+              .then(async (res) => {
+                  if (!res.ok) {
+                      throw new Error("Error fetching version");
+                  }
+                  
+                  const version = await res.text();
+                  document.getElementById('version').innerText = 'v' + version;
+              })
+              .catch((err) => {
+                  window.alert("Could not fetch version");
+              });
+
+          fetch("/languages")
+              .then(async (res) => {
+                  if (!res.ok) {
+                      throw new Error("Error fetching languages");
+                  }
+                  
+                  const languages = await res.json();
+                  const languagesList = document.getElementById('languages');
+                  const listFragment = document.createDocumentFragment();
+                  languages.forEach((lang) => {
+                      const listItem = document.createElement('li');
+                      listItem.innerText = lang.code + ' - ' +  lang.name;
+                      listFragment.appendChild(listItem);
+                  });
+                  languagesList.appendChild(listFragment);
+              })
+              .catch((err) => {
+                  window.alert("Could not fetch supported languages");
+              });
+      });
+    </script>
+  </body>
+</html>
+

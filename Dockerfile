@@ -12,6 +12,7 @@ RUN apt-get update -y && \
         pkg-config \
         cmake \
         curl \
+        xz-utils \
         git \
         cpio \
         libpcre2-dev \
@@ -116,6 +117,11 @@ RUN cd mecab-ipadic-2.7.0-20070801 && \
     make install
 RUN rm -rf mecab-ipadic-2.7.0-20070801
 
+# Download Firefox models
+WORKDIR /data/models
+RUN curl -LO https://github.com/terslang/LocalTranslate/releases/download/v0.5.0/firefox-models.tar.xz
+RUN tar -Jxf firefox-models.tar.xz -C .
+RUN rm firefox-models.tar.xz
 
 # Set ENV variables for compiled deps
 ENV PATH="/deps/installdir/bin:$PATH"
@@ -128,8 +134,10 @@ ENV PKG_CONFIG_PATH="/deps/installdir/lib/pkgconfig:$PKG_CONFIG_PATH"
 WORKDIR /app
 COPY . .
 WORKDIR /app/build
-RUN cmake -DMODELS_REGISTRY_FILE_PATH=/usr/share/glotter/models/firefox/registry.json -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/deps/installdir .. && \
-    make
+RUN mkdir install
+RUN cmake -DMODELS_REGISTRY_FILE_PATH=/data/models/firefox/registry.json -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/deps/installdir -DCMAKE_INSTALL_PREFIX=/app/install .. && \
+    make && \
+    make install
 
 ##################################
 ########## Final Stage ###########
@@ -138,29 +146,24 @@ FROM debian:trixie-slim as final
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && \
     apt-get install -y \
-        curl \
-        xz-utils \
         nlohmann-json3-dev \
         libyaml-cpp-dev  \
         libicu76 \
         libopenblas0
 
 RUN mkdir -p /deps/installdir
+RUN mkdir -p /data/models
+RUN mkdir -p /app/install
 
-# Copy installed dependencies from build stage
+# Copy installed dependencies and models from build stage
 COPY --from=build /deps/installdir /deps/installdir
+COPY --from=build /data/models /data/models
 
-ENV PATH="/deps/installdir/bin:$PATH"
+# Copy glotter binary & assets from build stage
+COPY --from=build /app/install /app/install
+
+ENV PATH="/app/install/bin:/deps/installdir/bin:$PATH"
 ENV LD_LIBRARY_PATH="/deps/installdir/lib:$LD_LIBRARY_PATH"
-    
-WORKDIR /app
-COPY --from=build /app/build/glotter .
-
-# Install firefox models
-RUN curl -LO https://github.com/terslang/LocalTranslate/releases/download/v0.5.0/firefox-models.tar.xz
-RUN mkdir -p /usr/share/glotter/models
-RUN tar -Jxf firefox-models.tar.xz -C /usr/share/glotter/models
-RUN rm firefox-models.tar.xz
 
 EXPOSE 9107
-ENTRYPOINT ["./glotter"]
+ENTRYPOINT ["glotter"]

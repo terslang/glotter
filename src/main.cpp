@@ -9,6 +9,7 @@ using json = nlohmann::json;
 
 #define JSON_CONTENT_TYPE "application/json"
 #define PLAIN_TEXT_CONTENT_TYPE "text/plain"
+#define HTML_CONTENT_TYPE "text/html"
 
 int main() {
   glotter::TranslationBridge bridge;
@@ -86,6 +87,11 @@ int main() {
       res.status = httplib::StatusCode::InternalServerError_500;
       res.set_content("Transliteration failed", PLAIN_TEXT_CONTENT_TYPE);
     }
+  });
+
+  svr.Get("/", [&](const httplib::Request &req, httplib::Response &res) {
+    res.set_file_content(std::string(ASSETS_PATH) + "/index.html",
+                         HTML_CONTENT_TYPE);
   });
 
   std::cout << "Server is running on http://localhost:9107" << std::endl;
