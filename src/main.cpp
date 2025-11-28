@@ -15,6 +15,19 @@ int main() {
   glotter::TranslationBridge bridge;
   httplib::Server svr;
 
+  // CORS support
+  svr.Options("/(.*)",
+              [&](const httplib::Request &req, httplib::Response &res) {
+                res.status = httplib::StatusCode::NoContent_204;
+              });
+
+  svr.set_post_routing_handler(
+      [&](const httplib::Request &req, httplib::Response &res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        res.set_header("Access-Control-Allow-Headers", "*");
+      });
+
   svr.Get("/version", [&](const httplib::Request &req, httplib::Response &res) {
     res.set_content(GLOTTER_VERSION, PLAIN_TEXT_CONTENT_TYPE);
   });

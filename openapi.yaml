@@ -1,0 +1,183 @@
+openapi: 3.0.0
+info:
+  title: Glotter API Spec
+  description: |-
+    Glotter is a free and open source, self-hostable, containerized translation server
+
+    Some useful links:
+    - [Glotter repository](https://github.com/terslang/glotter)
+    - [The source definition for the Glotter API](https://github.com/terslang/glotter/blob/main/openapi.yaml)
+  contact:
+    email: akash@ters.dev
+  license:
+    name: AGPL 3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 0.1.0
+externalDocs:
+  description: Find out more about Glotter
+  url: https://github.com/terslang/glotter
+servers:
+  - url: http://localhost:9107
+tags:
+  - name: Translation
+    description: Endpoints primarily used for translating texts
+  - name: Meta
+    description: Endpoints used to fetch metadata like version and stuff
+paths:
+  /languages:
+    get:
+      tags:
+        - Translation
+      summary: Get Languages
+      description: Fetch list of languages supported by the server
+      operationId: getLanguages
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguagesResponse'
+        '500':
+          description: Unexpected Error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /translate:
+    post:
+      tags:
+        - Translation
+      summary: Translate Text
+      description: Translate text between two supported languages
+      operationId: translate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TranslateRequest'
+      responses:
+        '200':
+          description: Translation Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslateResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Unexpected Error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /transliterate:
+    post:
+      tags:
+        - Translation
+      summary: Transliterate Text
+      description: Romanizes text of non-latin languages
+      operationId: transliterate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransliterateRequest'
+      responses:
+        '200':
+          description: Transliteration Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransliterateResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Unexpected Error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /version:
+    get:
+      tags:
+        - Meta
+      summary: Get Glotter Version
+      operationId: getVersion
+      responses:
+        '200':
+          description: Successful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 0.1.0
+  /source-code:
+    get:
+      tags:
+        - Meta
+      summary: Get Source Code of Glotter
+      description: Redirects to Glotter's github page
+      operationId: getSourceCode
+      responses:
+        '301':
+          description: Successful
+    
+components:
+  schemas:
+    TranslateRequest:
+      type: object
+      properties:
+        from:
+          type: string
+          example: en
+        to:
+          type: string
+          example: ja
+        text:
+          type: string
+          example: Sooner or later you’re going to realize just as I did that there’s a difference between knowing the path and walking the path
+    TranslateResponse:
+      type: object
+      properties:
+        translation:
+          type: string
+          example: 遅かれ早かれ、私がしたように、道を知ることと道を歩むことの間には違いがあることに気付くでしょう。
+    TransliterateRequest:
+      type: object
+      properties:
+        lang:
+          type: string
+          example: ja
+        text:
+          type: string
+          example: 遅かれ早かれ、私がしたように、道を知ることと道を歩むことの間には違いがあることに気付くでしょう。
+    TransliterateResponse:
+      type: object
+      properties:
+        transliteration:
+          type: string
+          example: osokare hayakare , watashi ga shi ta yo ni , michi wo shiru koto to michi wo ayumu koto no ma ni wa chigai ga aru koto ni kizuku desho u . 
+    LanguagesResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Language"
+    Language:
+      type: object
+      properties:
+        code:
+          type: string
+          example: en
+        name:
+          type: string
+          example: English
