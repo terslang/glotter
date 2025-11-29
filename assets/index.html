@@ -7,11 +7,79 @@
       body {
           font-family: Arial, sans-serif;
           margin-top: 50px;
+          width: 1150px;
+          margin: auto;
+          min-height: 100vh;
+          position: relative;
       }
     
       header {
           display: flex;
           gap: 1em;
+      }
+
+      .translation-section {
+          display: flex;
+          justify-content: space-between;
+          align-content: center;
+      }
+
+      .source, .target {
+          width: 45%;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5em;
+          border: 1px solid #ccc;
+          padding: 1%;
+      }
+
+      .source textarea, .target textarea {
+          width: 98%;
+          resize: none;
+      }
+
+      .dropdown-area select {
+          width: 200px;
+      }
+
+      .swap-button-area {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+      }
+
+      .text-area {
+          height: 20em;
+      }
+
+      .text-area textarea {
+          min-height: 60%;
+          height: 60%;
+      }
+      .text-area .transliterated-text {
+          margin-top: 0.5em;
+          font-style: italic;
+          color: #555;
+          max-height: 35%;
+          overflow-y: auto;
+      }
+
+      .actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 2em;
+      }
+
+      .actions button {
+          height: 32px;
+      }
+
+      footer {
+          position: absolute;
+          bottom: 10px;
+          width: 60%;
+          text-align: center;
+          margin: 0 20%;
       }
     </style>
   </head>
@@ -21,12 +89,92 @@
       <h3 id="version"></h3>
     </header>
 
-    <section>
-      <h2>Supported Languges</h2>
-      <ol id="languages"></ol>
+    <section class="translation-section">
+      <div class="source">
+          <div class="dropdown-area">
+            <select id="select-source" name="select-source"></select>
+          </div>
+          <div class="text-area">
+            <textarea id="source-text" name="source-text"></textarea>
+            <div id="source-transliteration" class="transliterated-text"></div>
+          </div>
+          <div class="actions">
+            <button id="paste-button">
+             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h167q11-35 43-57.5t70-22.5q40 0 71.5 22.5T594-840h166q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560h-80v80q0 17-11.5 28.5T640-640H320q-17 0-28.5-11.5T280-680v-80h-80v560Zm280-560q17 0 28.5-11.5T520-800q0-17-11.5-28.5T480-840q-17 0-28.5 11.5T440-800q0 17 11.5 28.5T480-760Z"/>
+             </svg>
+           </button>
+           <button id="translate-button">Translate</button>
+          </div>
+      </div>
+      <div class="swap-button-area">
+        <button id="swap-button">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m233-280 76 76q12 12 11.5 28T308-148q-12 11-28 11.5T252-148L108-292q-6-6-8.5-13T97-320q0-8 2.5-15t8.5-13l144-144q11-11 27.5-11t28.5 11q12 12 12 28.5T308-435l-75 75h567q17 0 28.5 11.5T840-320q0 17-11.5 28.5T800-280H233Zm494-320H160q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680h567l-76-76q-12-12-11.5-28t12.5-28q12-11 28-11.5t28 11.5l144 144q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13L708-468q-11 11-27.5 11T652-468q-12-12-12-28.5t12-28.5l75-75Z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="target">
+         <div class="dropdown-area">
+            <select id="select-target" name="select-target"></select>
+         </div>
+         <div class="text-area">
+           <textarea id="target-text" name="target-text" disabled></textarea>
+           <div id="target-transliteration" class="transliterated-text"></div>
+         </div>
+         <div class="actions">
+           <button id="copy-button">
+             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-520q0-17 11.5-28.5T160-720q17 0 28.5 11.5T200-680v520h400q17 0 28.5 11.5T640-120q0 17-11.5 28.5T600-80H200Zm160-240v-480 480Z"/>
+             </svg>
+           </button>
+         </div>
+      </div>
     </section>
+
+    <footer>
+      <a href="https://github.com/terslanf/glotter">Glotter</a> by Ters. Licenced under <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">AGPL 3.0</a>
+      <br />
+      <a href="/source-code">Click here</a> to get the source code.
+    </footer>
     
     <script>
+      const nonLatinLangs = ["ar", "be", "bg", "bn", "el", "fa", "gu", "he", "hi", "ja", "kn", "ko", "ml", "mt", "ru", "sr", "ta", "te", "uk", "zh"];
+      const debounce = (callback, delay) => {
+          let timeout;
+          return (...args) => {
+              clearTimeout(timeout);
+              timeout = setTimeout(() => {
+                  callback.apply(this, args);
+              }, delay);
+          };
+      };
+
+      const transliterateText = async (text, lang) => {
+          if (!nonLatinLangs.includes(lang)) {
+              return '';
+          }
+          
+          try {
+              const res = await fetch("/transliterate", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({
+                      lang: lang,
+                      text: text
+                  })
+              });
+              if (!res.ok) {
+                  throw new Error("Error during transliteration");
+              }
+                
+              const data = await res.json();
+              return data.transliteration;
+          } catch (err) {
+              window.alert("Transliteration failed");
+              return null;
+          }
+      };
+      
       window.addEventListener("load", async () => {
           fetch("/version")
               .then(async (res) => {
@@ -48,20 +196,132 @@
                   }
                   
                   const languages = await res.json();
-                  const languagesList = document.getElementById('languages');
-                  const listFragment = document.createDocumentFragment();
-                  languages.forEach((lang) => {
-                      const listItem = document.createElement('li');
-                      listItem.innerText = lang.code + ' - ' +  lang.name;
-                      listFragment.appendChild(listItem);
+                  const sourceLanguagesList = document.getElementById('select-source');
+                  const targetLanguagesList = document.getElementById('select-target');
+                  const sourceOptionsFragment = document.createDocumentFragment();
+                  const targetOptionsFragment = document.createDocumentFragment();
+                  languages.sort((a, b) => a.name.localeCompare(b.name)).forEach((lang) => {
+                      const sourceOptionItem = document.createElement('option');
+                      sourceOptionItem.value = lang.code;
+                      sourceOptionItem.innerText = lang.name;
+                      sourceOptionsFragment.appendChild(sourceOptionItem);
+
+                      const targetOptionItem = document.createElement('option');
+                      targetOptionItem.value = lang.code;
+                      targetOptionItem.innerText = lang.name;
+                      targetOptionsFragment.appendChild(targetOptionItem);
                   });
-                  languagesList.appendChild(listFragment);
+                  sourceLanguagesList.appendChild(sourceOptionsFragment);
+                  targetLanguagesList.appendChild(targetOptionsFragment);
+
+                  // Set default selections
+                  sourceLanguagesList.value = 'en';
+                  targetLanguagesList.value = 'de';
               })
               .catch((err) => {
                   window.alert("Could not fetch supported languages");
               });
       });
+
+      const swapButton = document.getElementById('swap-button');
+      swapButton.addEventListener("click", () => {
+          const sourceSelect = document.getElementById('select-source');
+          const targetSelect = document.getElementById('select-target');
+          const targetTransliterationDiv = document.getElementById('target-transliteration');
+          const tempValue = sourceSelect.value;
+          sourceSelect.value = targetSelect.value;
+          targetSelect.value = tempValue;
+
+          const sourceTextArea = document.getElementById('source-text');
+          const targetTextArea = document.getElementById('target-text');
+          sourceTextArea.value = targetTextArea.value;
+          targetTextArea.value = "";
+          targetTransliterationDiv.innerText = "";
+
+          transliterateText(sourceTextArea.value, sourceSelect.value)
+              .then((transliteration) => {
+                  const transliterationDiv = document.getElementById('source-transliteration');
+                  if (transliteration) {
+                      transliterationDiv.innerText = transliteration;
+                  } else {
+                      transliterationDiv.innerText = '';
+                  }
+              });
+      });
+
+      const pasteButton = document.getElementById('paste-button');
+      pasteButton.addEventListener("click", async () => {
+          const sourceTextArea = document.getElementById('source-text');
+          try {
+              const text = await navigator.clipboard.readText();
+              sourceTextArea.value = text;
+          } catch (err) {
+              window.alert("Could not read from clipboard");
+          }
+      });
+
+      const copyButton = document.getElementById('copy-button');
+      copyButton.addEventListener("click", async () => {
+          const targetTextArea = document.getElementById('target-text');
+          try {
+              await navigator.clipboard.writeText(targetTextArea.value);
+          } catch (err) {
+              window.alert("Could not write to clipboard");
+          }
+      });
+
+      const translateButton = document.getElementById('translate-button');
+      translateButton.addEventListener("click", () => {
+          const sourceText = document.getElementById('source-text').value;
+          const sourceLang = document.getElementById('select-source').value;
+          const targetLang = document.getElementById('select-target').value;
+          fetch("/translate", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                  from: sourceLang,
+                  to: targetLang,
+                  text: sourceText
+              })
+          })
+          .then(async (res) => {
+              if (!res.ok) {
+                  throw new Error("Error during translation");
+              }
+              
+              const data = await res.json();
+              document.getElementById('target-text').value = data.translation;
+
+              transliterateText(data.translation, targetLang)
+                  .then((transliteration) => {
+                      const transliterationDiv = document.getElementById('target-transliteration');
+                      if (transliteration) {
+                          transliterationDiv.innerText = transliteration;
+                      } else {
+                          transliterationDiv.innerText = '';
+                      }
+                    });
+          })
+          .catch((err) => {
+              window.alert("Translation failed");
+          });
+      });
+
+      const sourceTextArea = document.getElementById('source-text');
+      sourceTextArea.addEventListener("input", debounce(() => {
+          const sourceLang = document.getElementById('select-source').value;
+              transliterateText(sourceTextArea.value, sourceLang)
+                  .then((transliteration) => {
+                      const transliterationDiv = document.getElementById('source-transliteration');
+                      if (transliteration) {
+                          transliterationDiv.innerText = transliteration;
+                      } else {
+                          transliterationDiv.innerText = '';
+                      }
+                  });
+      }, 300));
     </script>
   </body>
 </html>
-
