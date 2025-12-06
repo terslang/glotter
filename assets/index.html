@@ -272,6 +272,7 @@
 
       const translateButton = document.getElementById('translate-button');
       translateButton.addEventListener("click", () => {
+          translateButton.disabled = true;
           const sourceText = document.getElementById('source-text').value;
           const sourceLang = document.getElementById('select-source').value;
           const targetLang = document.getElementById('select-target').value;
@@ -306,6 +307,9 @@
           })
           .catch((err) => {
               window.alert("Translation failed");
+          })
+          .finally(() => {
+             translateButton.disabled = false;
           });
       });
 
