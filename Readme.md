@@ -13,11 +13,31 @@ The API provides 5 endpoints where only 3 of them are relevant for most of the u
 * */version* - Responds with the current version of the API
 * */source-code* - Redirects to this github page
 
+**Just hitting the root '/' from a browser window gives a basic UI for translations**
+
+> Please refer to the openapi.yaml file for api specification.
+
 ## Here are a couple of examples
 
 <img width="1127" height="577" alt="Image" src="https://github.com/user-attachments/assets/960955ae-7632-46b4-becd-6e6063697fa8" />
 
 <img width="1248" height="548" alt="Image" src="https://github.com/user-attachments/assets/3902df17-f481-4c45-8893-ecd486e7de23" />
+
+## How to run docker image?
+
+`glotter` docker image is available in [ghcr](https://github.com/terslang/glotter/pkgs/container/glotter) packages.
+
+Pull the image
+```bash
+docker pull ghcr.io/terslang/glotter:latest
+```
+
+Run the container
+```bash
+docker run -d -p 9107:9107 --name glotter ghcr.io/terslang/glotter
+```
+
+I recommend using a reverse proxy with SSL/TLS for https when self hosting.
 
 ## Built with (Thanks to)
 - [terslang/kotki](https://github.com/terslang/kotki) (fork of [kroketio/kotki](https://github.com/kroketio/kotki))
