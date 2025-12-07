@@ -1,7 +1,7 @@
 ##################################
 ########## Build Stage ###########
 ##################################
-FROM debian:trixie as build
+FROM debian:trixie-slim AS build
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && \
     apt-get install -y \
@@ -139,10 +139,11 @@ RUN cmake -DMODELS_REGISTRY_FILE_PATH=/data/models/firefox/registry.json -DCMAKE
     make && \
     make install
 
+
 ##################################
 ########## Final Stage ###########
 ##################################
-FROM debian:trixie-slim as final
+FROM debian:trixie-slim AS final
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && \
     apt-get install -y \
@@ -156,7 +157,9 @@ RUN mkdir -p /data/models
 RUN mkdir -p /app/install
 
 # Copy installed dependencies and models from build stage
-COPY --from=build /deps/installdir /deps/installdir
+COPY --from=build /deps/installdir/bin /deps/installdir/bin
+COPY --from=build /deps/installdir/lib /deps/installdir/lib
+COPY --from=build /deps/installdir/etc /deps/installdir/etc
 COPY --from=build /data/models /data/models
 
 # Copy glotter binary & assets from build stage
